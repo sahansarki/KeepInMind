@@ -16,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
 
         object : CountDownTimer(3000, 1000) {
             override fun onFinish() {
-                this@SplashActivity extStartActivity MainActivity::class.java
+                this@SplashActivity.extStartActivity(DashboardActivity::class.java)
             }
 
             override fun onTick(millisUntilFinished: Long) {
