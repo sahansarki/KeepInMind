@@ -1,7 +1,9 @@
 package com.sahan.keepinmind.ui
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.sahan.keepinmind.R
 import kotlinx.android.synthetic.main.activity_game.*
@@ -10,6 +12,7 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
 
     private var tempTag = ""
     private var counter = 0
+    private var tempId = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,19 +31,9 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
 
     override fun onClick(view: View?) {
         openCard(view!!)
+        checkCard(view)
 
-        if (view.tag.toString() == tempTag) {
-            view.visibility = View.INVISIBLE
-            view.visibility = View.INVISIBLE
-        } else {
-            if (counter == 1) {
-                view.setBackgroundResource(R.mipmap.ic_launcher_round)
-                view.setBackgroundResource(R.mipmap.ic_launcher_round)
-            }
-        }
 
-        tempTag = view.tag.toString()
-        counter++
     }
 
     private fun openCard(view: View) {
@@ -65,4 +58,38 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
             }
         }
     }
+
+
+    private fun checkCard(view: View) {
+        object : CountDownTimer(2000, 1000) {
+            override fun onFinish() {
+                if (view.tag.toString() == tempTag) {
+                    view.visibility = View.INVISIBLE
+                    findViewById<ImageButton>(tempId).visibility = View.INVISIBLE
+                } else {
+                    if (counter == 1) {
+                        println(counter)
+                        view.setBackgroundResource(R.mipmap.ic_launcher_round)
+                        findViewById<ImageButton>(tempId).setBackgroundResource(R.mipmap.ic_launcher_round)
+                    }
+                }
+
+                tempTag = view.tag.toString()
+                tempId = view.id
+                counter++
+
+                if (counter == 2) {
+                    counter = 0
+                    tempTag = ""
+                    tempId = 0
+                }
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+
+            }
+
+        }.start()
+    }
 }
+
