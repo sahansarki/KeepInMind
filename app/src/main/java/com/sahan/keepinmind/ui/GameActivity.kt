@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.sahan.keepinmind.R
 import kotlinx.android.synthetic.main.activity_game.*
@@ -13,6 +14,7 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
     private var tempTag = ""
     private var counter = 0
     private var tempId = 0
+    private var flag = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,8 +32,19 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
     }
 
     override fun onClick(view: View?) {
-        openCard(view!!)
-        checkCard(view)
+
+        if (view?.id == tempId) {
+            view.setBackgroundResource(R.mipmap.ic_launcher_round)
+            clear()
+            return
+        }
+
+        if (flag) {
+            return
+        }
+
+        checkCard(view!!)
+        openCard(view)
 
 
     }
@@ -61,35 +74,55 @@ class GameActivity : AppCompatActivity(R.layout.activity_game), View.OnClickList
 
 
     private fun checkCard(view: View) {
-        object : CountDownTimer(2000, 1000) {
-            override fun onFinish() {
-                if (view.tag.toString() == tempTag) {
-                    view.visibility = View.INVISIBLE
-                    findViewById<ImageButton>(tempId).visibility = View.INVISIBLE
-                } else {
-                    if (counter == 1) {
-                        println(counter)
-                        view.setBackgroundResource(R.mipmap.ic_launcher_round)
-                        findViewById<ImageButton>(tempId).setBackgroundResource(R.mipmap.ic_launcher_round)
-                    }
+
+        if (counter == 1) {
+            flag = true
+            object : CountDownTimer(3000, 1000) {
+                override fun onFinish() {
+                    Toast.makeText(applicationContext, "onFinished", Toast.LENGTH_LONG).show()
+                    checkCard2(view)
                 }
 
-                tempTag = view.tag.toString()
-                tempId = view.id
-                counter++
+                override fun onTick(millisUntilFinished: Long) {
 
-                if (counter == 2) {
-                    counter = 0
-                    tempTag = ""
-                    tempId = 0
                 }
+
+            }.start()
+        } else {
+            checkCard2(view)
+        }
+
+
+    }
+
+    private fun checkCard2(view: View) {
+
+        if (view.tag.toString() == tempTag) {
+            view.visibility = View.INVISIBLE
+            findViewById<ImageButton>(tempId).visibility = View.INVISIBLE
+        } else {
+            if (counter == 1) {
+                view.setBackgroundResource(R.mipmap.ic_launcher_round)
+                findViewById<ImageButton>(tempId).setBackgroundResource(R.mipmap.ic_launcher_round)
             }
+        }
 
-            override fun onTick(millisUntilFinished: Long) {
+        tempTag = view.tag.toString()
+        tempId = view.id
+        counter++
 
-            }
+        if (counter == 2) {
+            clear()
+        }
 
-        }.start()
+
+    }
+
+    private fun clear() {
+        counter = 0
+        tempTag = ""
+        flag = false
+        tempId = 0
     }
 }
 
